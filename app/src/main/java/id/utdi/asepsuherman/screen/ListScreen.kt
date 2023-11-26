@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import id.utdi.asepsuherman.Destination
 import id.utdi.asepsuherman.R // Gantilah ini dengan nama file resource Anda
 
+// Data class untuk merepresentasikan destinasi wisata
 data class DestinationWisata(
     val id: Int,
     val nama: String,
@@ -26,6 +27,7 @@ data class DestinationWisata(
     val imageResId: Int
 )
 
+// List destinasi wisata
 val destinasiWisataList = listOf(
     DestinationWisata(
         id = 1,
@@ -53,6 +55,7 @@ val destinasiWisataList = listOf(
     )
 )
 
+// Fungsi untuk menampilkan layar daftar destinasi wisata
 @Composable
 fun ListScreen(navController: NavController) {
     LazyColumn(modifier = Modifier.background(Color.LightGray)) {
@@ -62,6 +65,7 @@ fun ListScreen(navController: NavController) {
     }
 }
 
+// Fungsi untuk menampilkan item destinasi wisata
 @Composable
 fun DestinationItem(destinasi: DestinationWisata, navController: NavController) {
     Box(
@@ -97,6 +101,7 @@ fun DestinationItem(destinasi: DestinationWisata, navController: NavController) 
                 modifier = Modifier
                     .padding(8.dp)
             )
+
             // Tombol untuk navigasi ke layar detail
             Button(
                 onClick = { navController.navigate(Destination.Detail.createRoute(destinasi.id)) },

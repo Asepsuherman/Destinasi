@@ -10,7 +10,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
-import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,10 +23,12 @@ import id.utdi.asepsuherman.screen.HomeScreen
 import id.utdi.asepsuherman.screen.ListScreen
 import id.utdi.asepsuherman.ui.theme.DestinasiTheme
 
+// Sealed class untuk representasi destinasi (halaman) dalam aplikasi
 sealed class Destination(val route:String){
     object Home: Destination("home")
     object List: Destination("list")
     object Detail: Destination("detail/{elementId"){
+        // Fungsi untuk membuat route detail dengan menyertakan elementId
         fun createRoute(elementId: Int) = "detail/$elementId"
     }
 }
@@ -37,11 +38,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             DestinasiTheme {
-                // A surface container using the 'background' color from the theme
+                // Container surface menggunakan warna 'background' dari tema
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    // Mendeklarasikan NavController dan menggunakan NavigationAppHost
                     val navController = rememberNavController()
                     NavigationAppHost(navController = navController)
                 }
@@ -52,17 +54,30 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigationAppHost(navController: NavHostController){
+    // Mengambil konteks lokal
     val ctx = LocalContext.current
- NavHost(navController = navController, startDestination = "home"){
-     composable(Destination.Home.route) { HomeScreen(navController)}
-     composable(Destination.List.route) { ListScreen(navController)}
-     composable(Destination.Detail.route) {navBackStackEntry ->
-         val elementId = navBackStackEntry.arguments?.getInt("elementId")
-         if (elementId == null){
-             Toast.makeText(ctx,"ElementId is required", Toast.LENGTH_SHORT).show()
-         } else {
-             Detail(elementId = elementId)
-         }
-     }
- }
+
+    // Mendefinisikan NavHost dengan start destination pada halaman home
+    NavHost(navController = navController, startDestination = Destination.Home.route){
+        // Menentukan komposisi untuk halaman home
+        composable(Destination.Home.route) { HomeScreen(navController)}
+
+        // Menentukan komposisi untuk halaman list
+        composable(Destination.List.route) { ListScreen(navController)}
+
+        // Menentukan komposisi untuk halaman detail dengan memanfaatkan argumen
+        composable(Destination.Detail.route) {navBackStackEntry ->
+            // Mendapatkan elementId dari argumen
+            val elementId = navBackStackEntry.arguments?.getInt("elementId")
+
+            // Memeriksa apakah elementId ada
+            if (elementId == null){
+                // Menampilkan pesan Toast jika elementId tidak ada
+                Toast.makeText(ctx,"ElementId is required", Toast.LENGTH_SHORT).show()
+            } else {
+                // Menampilkan halaman detail jika elementId ada
+                Detail(elementId = elementId)
+            }
+        }
+    }
 }
